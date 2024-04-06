@@ -1,8 +1,11 @@
-from data.models.text_embeddings_data_model import TextEmbeddingsDataModel
-from data.preprocessing.base import PreprocessorABC
+from typing import List
+
+from src.data.models.place_data_model import PlaceDataModel
+from src.data.models.text_embeddings_data_model import TextEmbeddingsDataModel
+from src.data.preprocessing.base import PreprocessorABC
 import logging
 
-from data.utils.embedder import EmbedderABC
+from src.data.utils.embedder import EmbedderABC
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -14,20 +17,32 @@ class TextEmbeddingsPreprocessor(PreprocessorABC):
         self.batch_size = batch_size
         self.embedder = embedder
 
-    def preprocess(self, data):
+    def preprocess(self, data: List[dict]):
         batch_texts = []
         batch_ids = []
 
         current_batch = 0
 
         for row in data:
-            item = row.get('item')
 
-            title = item.get('title')
-            description = item.get('description')
-            text = self._preprocess_text(title, description)
+            place = PlaceDataModel(**row)
+
+
+            text_data = []
+            if place.description:
+                text_data.append(place.description)
+            if place.title:
+                text_data.append(place.title)
+            if place.address:
+                text_data.append(place.address)
+            if place.metro_station:
+                text_data.append(place.metro_station)
+            if place.type:
+                text_data.append(place.type)
+
+            text = self._preprocess_text(text_data)
             batch_texts.append(text)
-            batch_ids.append(item.get('id'))
+            batch_ids.append(place.id)
 
             if len(batch_texts) == self.batch_size:
                 logger.info(f'Processing batch {current_batch}')
@@ -52,12 +67,15 @@ class TextEmbeddingsPreprocessor(PreprocessorABC):
 
             text_embeddings.append(embeddings)
 
-        self.storage.save(text_embeddings, 'embeddings')
+        self.storage.save(text_embeddings, path=None)
 
     @staticmethod
-    def _preprocess_text(title: str, description: str):
-        text = title + ' ' + description
-        text = text.replace('\n', ' ').replace('<br><br>', ' ').replace('<p>', '').replace('</p>', '').replace('<br>', '')
+    def _preprocess_text(text_data: List[str]):
+        if text_data is None:
+            return None
+
+        text = ' '.join(text_data)
+
         return text
 
     def _extract_features(self, batch_texts):

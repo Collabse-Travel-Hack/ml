@@ -1,5 +1,5 @@
-from data.models.text_embeddings_data_model import TextEmbeddingsDataModel
-from data.preprocess_storage.base import StorageABC
+from src.data.models.text_embeddings_data_model import TextEmbeddingsDataModel
+from src.data.preprocess_storage.base import StorageABC
 
 import weaviate.classes as wvc
 import weaviate
@@ -7,7 +7,7 @@ import weaviate
 
 class WeaviateStorage(StorageABC):
 
-    def __init__(self, weaviate_client, index_name="EmbeddingsIndex"):
+    def __init__(self, index_name="EmbeddingsIndex"):
         self.weaviate_client = weaviate.connect_to_local()
         self.index_name = index_name
 

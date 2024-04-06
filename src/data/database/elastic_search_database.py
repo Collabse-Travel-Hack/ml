@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 
-from data.database.base import DatabaseABC
+from src.data.database.base import DatabaseABC
 
 
 class ElasticDatabase(DatabaseABC):
@@ -16,11 +16,11 @@ class ElasticDatabase(DatabaseABC):
             self.client.close()
 
     def insert(self, index, data):
-        result = self.client.index(index=self.index, body=data)
+        result = self.client.index(index=index, body=data)
         return result['_id']
 
     def find(self, index, query):
-        result = self.client.search(index=self.index, body=query)
+        result = self.client.search(index=index, body=query)
         return [hit['_source'] for hit in result['hits']['hits']]
 
     def get_all(self, index):
@@ -29,7 +29,7 @@ class ElasticDatabase(DatabaseABC):
 
         # Инициализация поиска с прокруткой
         result = self.client.search(
-            index=self.index,
+            index=index,
             body={
                 'query': {
                     'match_all': {}

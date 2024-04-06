@@ -1,7 +1,6 @@
 from elasticsearch import Elasticsearch
-from data.preprocess_storage.base import StorageABC
+from src.data.preprocess_storage.base import StorageABC
 from elasticsearch import helpers
-
 
 
 class ElasticSearchStorage(StorageABC):

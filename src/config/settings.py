@@ -7,3 +7,4 @@ load_dotenv()
 # Получение значения переменной MONGODB_HOST
 MONGODB_HOST = os.getenv('MONGODB_HOST')
 BATCH_SIZE = os.getenv('BATCH_SIZE')
+ELASTICSEARCH_HOST = os.getenv('ELASTICSEARCH_HOST')

@@ -2,3 +2,7 @@ python-dotenv==1.0.1
 pymongo==4.6.3
 elasticsearch==8.13.0
 pydantic==2.6.4
+fastapi==0.110.1
+torch==2.2.2
+transformers==4.39.3
+uvicorn==0.29.0
