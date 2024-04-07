@@ -6,3 +6,4 @@ fastapi==0.110.1
 torch==2.2.2
 transformers==4.39.3
 uvicorn==0.29.0
+weaviate-client==4.5.5

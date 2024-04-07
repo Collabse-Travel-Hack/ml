@@ -5,6 +5,9 @@ from src.data.models.text_embeddings_data_model import TextEmbeddingsDataModel
 from src.data.preprocessing.base import PreprocessorABC
 import logging
 
+import re
+
+
 from src.data.utils.embedder import EmbedderABC
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -75,6 +78,15 @@ class TextEmbeddingsPreprocessor(PreprocessorABC):
             return None
 
         text = ' '.join(text_data)
+
+        # Удаление HTML-тегов
+        text = re.sub(r'<[^>]*>', '', text)
+
+        # Удаление ссылок
+        text = re.sub(r'http\S+', '', text)
+
+        # Удаление времени в формате xx:xx
+        text = re.sub(r'\d{2}:\d{2}', '', text)
 
         return text
 

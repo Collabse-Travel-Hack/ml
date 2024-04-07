@@ -13,3 +13,11 @@ class StorageABC(ABC):
     @abstractmethod
     def search(self, path, query):
         pass
+
+    @abstractmethod
+    def create_index(self):
+        pass
+
+    @abstractmethod
+    def delete_index(self):
+        pass
