@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI
 
 from src.config.settings import ELASTICSEARCH_HOST
@@ -36,5 +37,5 @@ app.include_router(router)
 #     # storage.delete_index()
 #
 #
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    uvicorn.run(app, host="localhost", port=3000)
