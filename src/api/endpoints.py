@@ -1,8 +1,8 @@
 from fastapi import HTTPException, Query, APIRouter
 from pydantic import BaseModel
 
-from data.utils.gigachat_api import GigachatAPI
-from src.data.models.event_data_model import EventDataModel
+from src.data.utils.embedder import RuBERTEmbedder
+from src.data.utils.gigachat_api import GigachatAPI
 # from src.api.model import embedder
 from src.config.settings import ELASTICSEARCH_HOST, WEAVIATE_HOST, GIGACHAT_HOST
 from src.data.database.elastic_search_database import ElasticDatabase
@@ -15,6 +15,9 @@ storage = WeaviateStorage(host=WEAVIATE_HOST)
 elastic_db = ElasticDatabase(host=ELASTICSEARCH_HOST)
 elastic_db.connect()
 
+embedder = RuBERTEmbedder()
+
+
 gigachat_api = GigachatAPI(host=GIGACHAT_HOST)
 
 
@@ -23,24 +26,24 @@ class GetSimilarRequest(BaseModel):
     top_k: int = Query(5, ge=1, le=10)
 
 
-# @router.post("/get_similar")
-# async def get_similar_handler(request: GetSimilarRequest):
-#     try:
-#         query_vector = embedder.predict([request.text])[0].tolist()
-#         similar_places = storage.search(query_vector, top_k=request.top_k)
-#
-#         if not similar_places:
-#             raise HTTPException(status_code=404, detail="Record not found")
-#
-#         results = []
-#
-#         for place in similar_places:
-#             results.append(elastic.find(index='places', query={"query": {"match": {"id": place['external_id']}}})[0])
-#
-#         return results
-#
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
+@router.post("/get_similar")
+async def get_similar_handler(request: GetSimilarRequest):
+    try:
+        query_vector = embedder.predict([request.text])[0].tolist()
+        similar_places = storage.search(query_vector, top_k=request.top_k)
+
+        if not similar_places:
+            raise HTTPException(status_code=404, detail="Record not found")
+
+        results = []
+
+        for place in similar_places:
+            results.append(elastic_db.find(index='places', query={"query": {"match": {"id": place['external_id']}}})[0])
+
+        return results
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.delete("/delete_index")

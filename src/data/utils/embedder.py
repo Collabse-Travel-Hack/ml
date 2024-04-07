@@ -21,6 +21,7 @@ class RuBERTEmbedder(EmbedderABC):
 
         self.tokenizer = AutoTokenizer.from_pretrained("DeepPavlov/rubert-base-cased")
         self.model = AutoModel.from_pretrained("DeepPavlov/rubert-base-cased")
+
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
 
