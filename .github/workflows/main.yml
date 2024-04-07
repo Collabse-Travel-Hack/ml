@@ -5,7 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  IMAGE: collabse-travel-gigachat-service
+  IMAGE: collabse-travel-ml-service
   DEV_TAG: dev
 
 jobs:
